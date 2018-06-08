@@ -62,10 +62,7 @@
 				2799C69820CA03FC0017AC75 /* Model */,
 				2799C69920CA04040017AC75 /* View */,
 				2799C69520CA03070017AC75 /* Controller */,
-				2799C68720C9FAE70017AC75 /* Main.storyboard */,
-				2799C68A20C9FAEA0017AC75 /* Assets.xcassets */,
-				2799C68C20C9FAEA0017AC75 /* LaunchScreen.storyboard */,
-				2799C68F20C9FAEA0017AC75 /* Info.plist */,
+				2799C6A020CA06AC0017AC75 /* Supporting Files */,
 			);
 			path = VirtualTourist;
 			sourceTree = "<group>";
@@ -92,6 +89,17 @@
 			children = (
 			);
 			path = View;
+			sourceTree = "<group>";
+		};
+		2799C6A020CA06AC0017AC75 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				2799C68720C9FAE70017AC75 /* Main.storyboard */,
+				2799C68A20C9FAEA0017AC75 /* Assets.xcassets */,
+				2799C68C20C9FAEA0017AC75 /* LaunchScreen.storyboard */,
+				2799C68F20C9FAEA0017AC75 /* Info.plist */,
+			);
+			path = "Supporting Files";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -314,7 +322,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 7TH488PB2F;
-				INFOPLIST_FILE = VirtualTourist/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/VirtualTourist/Supporting Files/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -332,7 +340,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 7TH488PB2F;
-				INFOPLIST_FILE = VirtualTourist/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/VirtualTourist/Supporting Files/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
