@@ -12,11 +12,15 @@ import MapKit
 class LocationsController: UIViewController, MKMapViewDelegate {
     
     @IBOutlet weak var mapView: MKMapView!
+    @IBOutlet weak var editInfo: UIView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Add long press gesture recognizer to add pin to map view
         configLongPressRecognizer()
+        
+        // Initialize Edit-Done button
+        self.navigationItem.rightBarButtonItem = self.editButtonItem
     }
     
     func configLongPressRecognizer() {
@@ -33,29 +37,22 @@ class LocationsController: UIViewController, MKMapViewDelegate {
         newPin.coordinate = locationCoordinate
         
         // Don't drop pins if user is dragging or lifting finger
-        if recognizer.state == .changed || recognizer.state == .ended { return }
+        if recognizer.state == .began { mapView.addAnnotation(newPin) }
+    }
+    
+    // Edit-Done actions
+    override func setEditing(_ editing: Bool, animated: Bool) {
+        super.setEditing(editing, animated: animated)
         
-        addPinToMap(newPin)
-    }
-    
-    func addPinToMap(_ pin: MKPointAnnotation) {
-        // Check if same pin already exists on map
-        let isPinOnMap = checkIfPinExists(pin)
-        if isPinOnMap { return }
-        mapView.addAnnotation(pin)
-    }
-    
-    func checkIfPinExists(_ pin: MKPointAnnotation) -> Bool {
-        let isPinOnMap = self.mapView.annotations.contains { existingPin in
-            if existingPin.coordinate.latitude == pin.coordinate.latitude && existingPin.coordinate.longitude == pin.coordinate.longitude {
-                return true
-            } else {
-                return false
-            }
+        if editing {
+            editInfo.isHidden = false
+            mapView.frame.origin.y = -70
+        } else {
+            editInfo.isHidden = true
+            mapView.frame.origin.y = 0
         }
-        return isPinOnMap
     }
-    
+
     // MARK: - MKMapViewDelegate
     
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
@@ -70,6 +67,18 @@ class LocationsController: UIViewController, MKMapViewDelegate {
     }
     
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
-        print("Hi!")
+        mapView.deselectAnnotation(view.annotation, animated: true)
+        
+        // Delete pin if editing
+        if isEditing {
+            mapView.removeAnnotation(view.annotation!)
+            return
+        }
+        
+        let photoAlbumViewController = self.storyboard?.instantiateViewController(withIdentifier: "photoAlbum") as! PhotoAlbumController
+        // Set coordinate
+        photoAlbumViewController.coordinate = view.annotation?.coordinate
+        // Segue to photo album
+        self.navigationController?.pushViewController(photoAlbumViewController, animated: true)
     }
 }
