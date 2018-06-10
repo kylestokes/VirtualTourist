@@ -9,10 +9,12 @@
 import UIKit
 import MapKit
 
-class PhotoAlbumController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource {
+class PhotoAlbumController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, MKMapViewDelegate {
 
     @IBOutlet weak var mapView: MKMapView!
     var coordinate: CLLocationCoordinate2D!
+    
+    // MARK: - View lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -20,7 +22,18 @@ class PhotoAlbumController: UIViewController, UICollectionViewDelegate, UICollec
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        print("COORDINATE: \(coordinate)")
+        configMapForSelectedPin()
+    }
+    
+    func configMapForSelectedPin() {
+        // Center map
+        let center = CLLocationCoordinate2D(latitude: coordinate.latitude, longitude: coordinate.longitude)
+        let region = MKCoordinateRegion(center: center, span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))
+        self.mapView.setRegion(region, animated: true)
+        // Add pin
+        let annotation = MKPointAnnotation()
+        annotation.coordinate = center
+        self.mapView.addAnnotation(annotation)
     }
     
     // MARK: - MKMapViewDelegate
@@ -31,7 +44,6 @@ class PhotoAlbumController: UIViewController, UICollectionViewDelegate, UICollec
         if pinView == nil {
             pinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseId)
             pinView!.pinTintColor = .red
-            pinView!.animatesDrop = true
         }
         return pinView
     }

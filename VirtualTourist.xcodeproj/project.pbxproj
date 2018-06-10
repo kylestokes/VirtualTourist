@@ -14,6 +14,7 @@
 		2799C68E20C9FAEA0017AC75 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2799C68C20C9FAEA0017AC75 /* LaunchScreen.storyboard */; };
 		2799C69720CA03530017AC75 /* PhotoAlbumController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2799C69620CA03530017AC75 /* PhotoAlbumController.swift */; };
 		2799C69F20CA04A50017AC75 /* VirtualTourist.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 2799C69D20CA04A50017AC75 /* VirtualTourist.xcdatamodeld */; };
+		27B8A5EB20CCA4A6007BBAD4 /* DataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27B8A5EA20CCA4A6007BBAD4 /* DataController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +27,7 @@
 		2799C68F20C9FAEA0017AC75 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2799C69620CA03530017AC75 /* PhotoAlbumController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoAlbumController.swift; sourceTree = "<group>"; };
 		2799C69E20CA04A50017AC75 /* VirtualTourist.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = VirtualTourist.xcdatamodel; sourceTree = "<group>"; };
+		27B8A5EA20CCA4A6007BBAD4 /* DataController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,6 +82,7 @@
 			isa = PBXGroup;
 			children = (
 				2799C69D20CA04A50017AC75 /* VirtualTourist.xcdatamodeld */,
+				27B8A5EA20CCA4A6007BBAD4 /* DataController.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -173,6 +176,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				27B8A5EB20CCA4A6007BBAD4 /* DataController.swift in Sources */,
 				2799C69F20CA04A50017AC75 /* VirtualTourist.xcdatamodeld in Sources */,
 				2799C68620C9FAE70017AC75 /* LocationsController.swift in Sources */,
 				2799C69720CA03530017AC75 /* PhotoAlbumController.swift in Sources */,
