@@ -14,6 +14,9 @@ class LocationsController: UIViewController, MKMapViewDelegate {
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var editInfo: UIView!
     
+    // This is injected when app loads
+    var dataController: DataController!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Add long press gesture recognizer to add pin to map view
@@ -76,8 +79,13 @@ class LocationsController: UIViewController, MKMapViewDelegate {
         }
         
         let photoAlbumViewController = self.storyboard?.instantiateViewController(withIdentifier: "photoAlbum") as! PhotoAlbumController
-        // Set coordinate
-        photoAlbumViewController.coordinate = view.annotation?.coordinate
+        // Send pin to photoAlbumViewController
+        let pin = Pin(context: dataController.viewContext)
+        pin.latitude = (view.annotation?.coordinate.latitude)!
+        pin.longitude = (view.annotation?.coordinate.longitude)!
+        photoAlbumViewController.pin = pin
+        // Dependency injection
+        photoAlbumViewController.dataController = dataController
         // Segue to photo album
         self.navigationController?.pushViewController(photoAlbumViewController, animated: true)
     }
