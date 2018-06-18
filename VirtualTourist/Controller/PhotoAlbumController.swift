@@ -16,7 +16,6 @@ class PhotoAlbumController: UIViewController {
     
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var collectionView: UICollectionView!
-    @IBOutlet weak var flowLayout: UICollectionViewFlowLayout!
     @IBOutlet weak var collectionButton: UIBarButtonItem!
     
     @IBAction func collectionButtonPressed(_ sender: UIBarButtonItem) {
@@ -55,18 +54,6 @@ class PhotoAlbumController: UIViewController {
         }
     }
     
-    func configFlowLayout() {
-        let viewFrameSize = view.frame.size
-        let space: CGFloat = 3.0
-        let dimension: CGFloat
-        
-        dimension = (viewFrameSize.width - (2 * space)) / 3.0
-        
-        flowLayout?.minimumInteritemSpacing = space
-        flowLayout?.minimumLineSpacing = space
-        flowLayout?.itemSize = CGSize(width: dimension, height: dimension)
-    }
-    
     // MARK: - View lifecycle
     
     override func viewDidLoad() {
@@ -79,7 +66,6 @@ class PhotoAlbumController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        configFlowLayout()
         configFetchResultsController()
         configMapForSelectedPin()
         configPhotos()
@@ -88,12 +74,6 @@ class PhotoAlbumController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         fetchedResultsController = nil
-    }
-    
-    // Re-configure flow layout if device is rotated
-    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        super.viewWillTransition(to: size, with: coordinator)
-        configFlowLayout()
     }
     
     // Determine if any photos are saved in Core Data
@@ -267,6 +247,29 @@ extension PhotoAlbumController: UICollectionViewDelegate {
         
         let collectionButtonTitle = selectedPhotoIndexes.count == 0 ? "New Collection" : "Remove Collection"
         collectionButton.title = collectionButtonTitle
+    }
+}
+
+// MARK: - UICollectionViewDelegateFlowLayout
+extension PhotoAlbumController: UICollectionViewDelegateFlowLayout {
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let width = (collectionView.bounds.width - (5 * 3)) / 3.0
+        let height = width
+        
+        return CGSize(width: width, height: height)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        return UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        return 0
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return 2
     }
 }
 

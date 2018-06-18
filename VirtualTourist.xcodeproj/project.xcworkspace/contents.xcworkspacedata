@@ -2,9 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:/Users/kyle/Documents/iOS Nanodegree/6. Data Persistance/Virtual Tourist/VirtualTourist/VirtualTourist/Model/DataController.swift">
-   </FileRef>
-   <FileRef
       location = "self:">
    </FileRef>
 </Workspace>
