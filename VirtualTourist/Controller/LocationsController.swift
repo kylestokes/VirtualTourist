@@ -14,6 +14,8 @@ class LocationsController: UIViewController {
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var editInfo: UIView!
     
+    let appDelegate = UIApplication.shared.delegate as! AppDelegate
+    
     // This is injected when app loads
     var dataController: DataController!
     
@@ -28,9 +30,11 @@ class LocationsController: UIViewController {
         self.navigationItem.rightBarButtonItem = self.editButtonItem
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         
+        // Show previous map center coordinate
+        getMapCoordinates()
     }
     
     func configLongPressRecognizer() {
@@ -63,9 +67,17 @@ class LocationsController: UIViewController {
         }
     }
     
-    // Save map coordinates to UserDefaults
-    func saveMapCoordinates() {
-        
+    // Save map coordinates to UserDefaults on segue
+    func saveMapCoordinates(coordinates: [CLLocationDegrees]) {
+        UserDefaults.standard.set(coordinates, forKey: "centerCoordinate")
+    }
+    
+    // Get map coordinates from UserDefaults
+    func getMapCoordinates() {
+        if let coordinates = UserDefaults.standard.value(forKey: "centerCoordinate") as? [CLLocationDegrees] {
+            mapView.centerCoordinate.latitude = coordinates[0]
+            mapView.centerCoordinate.longitude = coordinates[1]
+        }
     }
 }
 
@@ -103,5 +115,14 @@ extension LocationsController: MKMapViewDelegate {
         photoAlbumViewController.dataController = dataController
         // Segue to photo album
         self.navigationController?.pushViewController(photoAlbumViewController, animated: true)
+    }
+    
+    func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
+        // Save map coordinates
+        var coordinates = [CLLocationDegrees]()
+        coordinates.append(mapView.centerCoordinate.latitude)
+        coordinates.append(mapView.centerCoordinate.longitude)
+        appDelegate.coordinates = coordinates
+        saveMapCoordinates(coordinates: coordinates)
     }
 }
