@@ -62,6 +62,11 @@ class LocationsController: UIViewController {
             mapView.frame.origin.y = 0
         }
     }
+    
+    // Save map coordinates to UserDefaults
+    func saveMapCoordinates() {
+        
+    }
 }
 
 // MARK: - MKMapViewDelegate
