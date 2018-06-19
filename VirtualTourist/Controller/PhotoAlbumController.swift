@@ -176,6 +176,8 @@ extension PhotoAlbumController: UICollectionViewDataSource {
         
         DispatchQueue.main.async {
             cell.imageView.image = nil
+            cell.backgroundColor = UIColor.lightGray
+            cell.activityIndicator.hidesWhenStopped = true
             cell.activityIndicator.startAnimating()
         }
         
@@ -251,6 +253,8 @@ extension PhotoAlbumController: UICollectionViewDelegate {
 }
 
 // MARK: - UICollectionViewDelegateFlowLayout
+//         https://stackoverflow.com/a/45995121
+
 extension PhotoAlbumController: UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -270,6 +274,7 @@ extension PhotoAlbumController: UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return 2
+        
     }
 }
 
