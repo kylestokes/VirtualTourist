@@ -9,13 +9,15 @@
 import UIKit
 import MapKit
 
-class LocationsController: UIViewController, MKMapViewDelegate {
+class LocationsController: UIViewController {
     
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var editInfo: UIView!
     
     // This is injected when app loads
     var dataController: DataController!
+    
+    // MARK: - View lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,6 +26,11 @@ class LocationsController: UIViewController, MKMapViewDelegate {
         
         // Initialize Edit-Done button
         self.navigationItem.rightBarButtonItem = self.editButtonItem
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
     }
     
     func configLongPressRecognizer() {
@@ -55,8 +62,11 @@ class LocationsController: UIViewController, MKMapViewDelegate {
             mapView.frame.origin.y = 0
         }
     }
+}
 
-    // MARK: - MKMapViewDelegate
+// MARK: - MKMapViewDelegate
+
+extension LocationsController: MKMapViewDelegate {
     
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
         let reuseId = "pin"
