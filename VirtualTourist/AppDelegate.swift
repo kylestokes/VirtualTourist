@@ -24,6 +24,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let navigationController = window?.rootViewController as! UINavigationController
         let locationsController = navigationController.topViewController as! LocationsController
         locationsController.dataController = dataController
+        
+        // Set default coordinate values
+        coordinates.append(37.1328 as CLLocationDegrees)
+        coordinates.append(-95.7855 as CLLocationDegrees)
+        
         return true
     }
 

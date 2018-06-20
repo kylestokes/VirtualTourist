@@ -8,13 +8,14 @@
 
 import UIKit
 import MapKit
+import CoreData
 
 class LocationsController: UIViewController {
     
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var editInfo: UIView!
     
-    let appDelegate = UIApplication.shared.delegate as! AppDelegate
+    var pins: [Pin] = [Pin]()
     
     // This is injected when app loads
     var dataController: DataController!
@@ -28,6 +29,9 @@ class LocationsController: UIViewController {
         
         // Initialize Edit-Done button
         self.navigationItem.rightBarButtonItem = self.editButtonItem
+        
+        // Retrieve pins from Core Data
+        loadPins()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -35,6 +39,8 @@ class LocationsController: UIViewController {
         
         // Show previous map center coordinate
         getMapCoordinates()
+        
+        print(mapView.centerCoordinate)
     }
     
     func configLongPressRecognizer() {
@@ -47,11 +53,33 @@ class LocationsController: UIViewController {
         let location = recognizer.location(in: self.mapView)
         let locationCoordinate : CLLocationCoordinate2D = mapView.convert(location, toCoordinateFrom: self.mapView)
         
-        let newPin = MKPointAnnotation()
-        newPin.coordinate = locationCoordinate
-        
         // Don't drop pins if user is dragging or lifting finger
-        if recognizer.state == .began { mapView.addAnnotation(newPin) }
+        if recognizer.state == .began {
+            // Persist pin to Core Data
+            createPin(coordinate: locationCoordinate)
+            // Add pin as point annotation on map
+            let pointAnnotation = MKPointAnnotation()
+            pointAnnotation.coordinate = locationCoordinate
+            mapView.addAnnotation(pointAnnotation)
+        }
+    }
+    
+    func createPin(coordinate: CLLocationCoordinate2D){
+        let pin = Pin(longitude: coordinate.longitude, latitude: coordinate.latitude, context: dataController.viewContext)
+        pins.append(pin)
+    }
+    
+    func loadPins() {
+        let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Pin")
+        request.returnsObjectsAsFaults = false
+        do {
+            let pins = try dataController.viewContext.fetch(request)
+            for pin in pins as! [NSManagedObject] {
+                print(pin.value(forKey: "longitude") as! Double)
+            }
+        } catch {
+            print("Unable to retrieve pins from Core Data")
+        }
     }
     
     // Edit-Done actions
@@ -122,6 +150,7 @@ extension LocationsController: MKMapViewDelegate {
         var coordinates = [CLLocationDegrees]()
         coordinates.append(mapView.centerCoordinate.latitude)
         coordinates.append(mapView.centerCoordinate.longitude)
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
         appDelegate.coordinates = coordinates
         saveMapCoordinates(coordinates: coordinates)
     }
