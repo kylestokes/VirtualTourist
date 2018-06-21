@@ -69,41 +69,38 @@ class LocationsController: UIViewController {
     func createPin(coordinate: CLLocationCoordinate2D){
         let pin = Pin(longitude: coordinate.longitude, latitude: coordinate.latitude, context: dataController.viewContext)
         pins.append(pin)
-        
-        do {
-            try dataController.viewContext.save()
-        } catch {
-            print("Unable to save Core Data")
-        }
+        dataController.save()
     }
     
     func loadPins() {
         let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Pin")
         request.returnsObjectsAsFaults = false
         do {
-            let pins = try dataController.viewContext.fetch(request)
-            for pin in pins as! [NSManagedObject] {
-                let latitude = pin.value(forKey: "latitude") as! Double
-                let longitiude = pin.value(forKey: "longitude") as! Double
+            let pins = try dataController.viewContext.fetch(request) as! [Pin]
+            let pinsSet = Set(pins)
+            for pin in pinsSet {
+                let latitude = pin.latitude
+                let longitiude = pin.longitude
                 let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitiude)
                 addPinToMapFrom(coordinate: coordinate)
                 // Add to pins array
-                self.pins.append(pin as! Pin)
+                self.pins.append(pin)
             }
         } catch {
             print("Unable to retrieve pins from Core Data")
         }
     }
     
-    func getPinToDeleteFrom(coordinate: CLLocationCoordinate2D) -> Pin {
-        var pinToDelete: Pin = Pin(context: dataController.viewContext)
+    func deletePinWith(coordinate: CLLocationCoordinate2D) {
         for pin in pins {
             if pin.longitude == coordinate.longitude && pin.latitude == coordinate.latitude {
-                pinToDelete = pin
+                // Delete from Core Data
+                dataController.viewContext.delete(pin)
+                // Remove from pins array
+                pins.remove(at: pins.index(of: pin)!)
                 break
             }
         }
-        return pinToDelete
     }
     
     // Edit-Done actions
@@ -153,16 +150,8 @@ extension LocationsController: MKMapViewDelegate {
         
         // Delete pin if editing
         if isEditing {
-            let pin = getPinToDeleteFrom(coordinate: (view.annotation?.coordinate)!)
-            // Delete from Core Data
-            dataController.viewContext.delete(pin)
-            do {
-                try dataController.viewContext.save()
-            } catch {
-                print("Unable to save Core Data")
-            }
-            // Remove from pins array
-            pins.remove(at: pins.index(of: pin)!)
+            deletePinWith(coordinate: (view.annotation?.coordinate)!)
+            dataController.save()
             // Remove from map
             mapView.removeAnnotation(view.annotation!)
             return

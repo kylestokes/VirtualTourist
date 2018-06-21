@@ -43,6 +43,16 @@ class DataController {
             completion?()
         })
     }
+    
+    func save() {
+        if viewContext.hasChanges {
+            do {
+                try viewContext.save()
+            } catch {
+                print("Unable to save changes")
+            }
+        }
+    }
 }
 
 // MARK: - Autosave

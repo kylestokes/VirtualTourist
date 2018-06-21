@@ -53,5 +53,11 @@ struct Constants {
     struct FlickrResponseValues {
         static let OKStatus = "ok"
     }
+    
+    // MARK: UIBarButtonItem titles
+    struct BarButtonTitles {
+        static let NewCollection = "New Collection"
+        static let RemoveSelectedPhotos = "Remove selected photos"
+    }
 }
 

@@ -19,7 +19,32 @@ class PhotoAlbumController: UIViewController {
     @IBOutlet weak var collectionButton: UIBarButtonItem!
     
     @IBAction func collectionButtonPressed(_ sender: UIBarButtonItem) {
-        
+        // Remove all photos
+        if sender.title == "New Collection" {
+            for photo in fetchedResultsController.fetchedObjects! {
+                dataController.viewContext.delete(photo)
+            }
+            // Update current page number of photo results from Flickr
+            if currentPageNumber < numberOfPagesForPin {
+                currentPageNumber += 1
+            } else {
+                currentPageNumber = numberOfPagesForPin
+            }
+            // Get all new photos
+            retrievePhotosFromFlickr(forPage: currentPageNumber)
+            dataController.save()
+            
+        } else {
+        // Remove only selected photos
+            for index in selectedPhotoIndexes {
+                let photo = fetchedResultsController.object(at: index)
+                dataController.viewContext.delete(photo)
+            }
+            // Reset selected indexes
+            selectedPhotoIndexes.removeAll()
+            collectionButton.title = Constants.BarButtonTitles.NewCollection
+            dataController.save()
+        }
     }
     
     
@@ -79,12 +104,12 @@ class PhotoAlbumController: UIViewController {
     // Determine if any photos are saved in Core Data
     func configPhotos() {
         if (fetchedResultsController.fetchedObjects?.count == 0) {
-            retrievePhotosFromFlickr(currentPageNumber)
+            retrievePhotosFromFlickr(forPage: currentPageNumber)
         }
     }
     
     // Get all photo URLs for pin
-    func retrievePhotosFromFlickr(_ forPage: Int) {
+    func retrievePhotosFromFlickr(forPage: Int) {
         FlickrClient.sharedInstance().getPhotoURLsForLocation(pin.latitude, pin.longitude, forPage, completionHandlerPhotos: { (result, numberOfPages, error) in
             
             if (error == nil) {
@@ -229,7 +254,7 @@ extension PhotoAlbumController: UICollectionViewDelegate {
             cell?.alpha = 1
         }
         
-        let collectionButtonTitle = selectedPhotoIndexes.count == 0 ? "New Collection" : "Remove Collection"
+        let collectionButtonTitle = selectedPhotoIndexes.count == 0 ? Constants.BarButtonTitles.NewCollection : Constants.BarButtonTitles.RemoveSelectedPhotos
         collectionButton.title = collectionButtonTitle
     }
 }
