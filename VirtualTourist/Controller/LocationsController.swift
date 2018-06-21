@@ -39,8 +39,6 @@ class LocationsController: UIViewController {
         
         // Show previous map center coordinate
         getMapCoordinates()
-        
-        print(mapView.centerCoordinate)
     }
     
     func configLongPressRecognizer() {
@@ -58,15 +56,25 @@ class LocationsController: UIViewController {
             // Persist pin to Core Data
             createPin(coordinate: locationCoordinate)
             // Add pin as point annotation on map
-            let pointAnnotation = MKPointAnnotation()
-            pointAnnotation.coordinate = locationCoordinate
-            mapView.addAnnotation(pointAnnotation)
+            addPinToMapFrom(coordinate: locationCoordinate)
         }
+    }
+    
+    func addPinToMapFrom(coordinate: CLLocationCoordinate2D) {
+        let pointAnnotation = MKPointAnnotation()
+        pointAnnotation.coordinate = coordinate
+        mapView.addAnnotation(pointAnnotation)
     }
     
     func createPin(coordinate: CLLocationCoordinate2D){
         let pin = Pin(longitude: coordinate.longitude, latitude: coordinate.latitude, context: dataController.viewContext)
         pins.append(pin)
+        
+        do {
+            try dataController.viewContext.save()
+        } catch {
+            print("Unable to save Core Data")
+        }
     }
     
     func loadPins() {
@@ -75,11 +83,27 @@ class LocationsController: UIViewController {
         do {
             let pins = try dataController.viewContext.fetch(request)
             for pin in pins as! [NSManagedObject] {
-                print(pin.value(forKey: "longitude") as! Double)
+                let latitude = pin.value(forKey: "latitude") as! Double
+                let longitiude = pin.value(forKey: "longitude") as! Double
+                let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitiude)
+                addPinToMapFrom(coordinate: coordinate)
+                // Add to pins array
+                self.pins.append(pin as! Pin)
             }
         } catch {
             print("Unable to retrieve pins from Core Data")
         }
+    }
+    
+    func getPinToDeleteFrom(coordinate: CLLocationCoordinate2D) -> Pin {
+        var pinToDelete: Pin = Pin(context: dataController.viewContext)
+        for pin in pins {
+            if pin.longitude == coordinate.longitude && pin.latitude == coordinate.latitude {
+                pinToDelete = pin
+                break
+            }
+        }
+        return pinToDelete
     }
     
     // Edit-Done actions
@@ -129,6 +153,17 @@ extension LocationsController: MKMapViewDelegate {
         
         // Delete pin if editing
         if isEditing {
+            let pin = getPinToDeleteFrom(coordinate: (view.annotation?.coordinate)!)
+            // Delete from Core Data
+            dataController.viewContext.delete(pin)
+            do {
+                try dataController.viewContext.save()
+            } catch {
+                print("Unable to save Core Data")
+            }
+            // Remove from pins array
+            pins.remove(at: pins.index(of: pin)!)
+            // Remove from map
             mapView.removeAnnotation(view.annotation!)
             return
         }

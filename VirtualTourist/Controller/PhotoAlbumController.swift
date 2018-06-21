@@ -109,24 +109,6 @@ class PhotoAlbumController: UIViewController {
         })
     }
     
-    func convertPhotoURLsToPhotos() {
-        dataController?.performBackgroundOperation { (workerContext) in
-            for photo in self.fetchedResultsController.fetchedObjects! {
-                if photo.image == nil {
-                    _ = FlickrClient.sharedInstance().convertURLToPhotoData(photoURL: photo.imageURL!, completionHandler: { (photoData, error) in
-                        
-                        if (error == nil) {
-                            photo.image = photoData as NSData?
-                        }
-                        else {
-                            print("Could not convert photo URLs to images")
-                        }
-                    })
-                }
-            }
-        }
-    }
-    
     func configMapForSelectedPin() {
         // Center map
         let center = CLLocationCoordinate2D(latitude: pin.latitude, longitude: pin.longitude)
