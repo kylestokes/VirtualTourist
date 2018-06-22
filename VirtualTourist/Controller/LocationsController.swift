@@ -73,12 +73,9 @@ class LocationsController: UIViewController {
     }
     
     func loadPins() {
-        let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Pin")
-        request.returnsObjectsAsFaults = false
-        do {
-            let pins = try dataController.viewContext.fetch(request) as! [Pin]
-            let pinsSet = Set(pins)
-            for pin in pinsSet {
+        let request: NSFetchRequest<Pin> = Pin.fetchRequest()
+        if let result = try? dataController?.viewContext.fetch(request) {
+            for pin in result! {
                 let latitude = pin.latitude
                 let longitiude = pin.longitude
                 let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitiude)
@@ -86,19 +83,17 @@ class LocationsController: UIViewController {
                 // Add to pins array
                 self.pins.append(pin)
             }
-        } catch {
-            print("Unable to retrieve pins from Core Data")
         }
     }
     
     func deletePinWith(coordinate: CLLocationCoordinate2D) {
-        for pin in pins {
-            if pin.longitude == coordinate.longitude && pin.latitude == coordinate.latitude {
-                // Delete from Core Data
-                dataController.viewContext.delete(pin)
-                // Remove from pins array
-                pins.remove(at: pins.index(of: pin)!)
-                break
+        let request: NSFetchRequest<Pin> = Pin.fetchRequest()
+        if let result = try? dataController?.viewContext.fetch(request) {
+            for pin in result! {
+                if pin.longitude == coordinate.longitude && pin.latitude == coordinate.latitude {
+                    // Delete from Core Data
+                    dataController.viewContext.delete(pin)
+                }
             }
         }
     }

@@ -20,30 +20,34 @@ class PhotoAlbumController: UIViewController {
     
     @IBAction func collectionButtonPressed(_ sender: UIBarButtonItem) {
         // Remove all photos
-        if sender.title == "New Collection" {
+        if sender.title == Constants.BarButtonTitles.NewCollection {
+            collectionButton.isEnabled = false
             for photo in fetchedResultsController.fetchedObjects! {
                 dataController.viewContext.delete(photo)
             }
+            dataController.save()
             // Update current page number of photo results from Flickr
             if currentPageNumber < numberOfPagesForPin {
                 currentPageNumber += 1
             } else {
                 currentPageNumber = numberOfPagesForPin
             }
+            
+            collectionView.isHidden = false
+            
             // Get all new photos
             retrievePhotosFromFlickr(forPage: currentPageNumber)
-            dataController.save()
             
         } else {
         // Remove only selected photos
-            for index in selectedPhotoIndexes {
-                let photo = fetchedResultsController.object(at: index)
+            for photoIndex in selectedPhotoIndexes {
+                let photo = fetchedResultsController.object(at: photoIndex)
                 dataController.viewContext.delete(photo)
             }
+            dataController.save()
             // Reset selected indexes
             selectedPhotoIndexes.removeAll()
             collectionButton.title = Constants.BarButtonTitles.NewCollection
-            dataController.save()
         }
     }
     
