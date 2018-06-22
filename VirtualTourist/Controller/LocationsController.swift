@@ -154,10 +154,12 @@ extension LocationsController: MKMapViewDelegate {
         
         let photoAlbumViewController = self.storyboard?.instantiateViewController(withIdentifier: "photoAlbum") as! PhotoAlbumController
         // Send pin to photoAlbumViewController
-        let pin = Pin(context: dataController.viewContext)
-        pin.latitude = (view.annotation?.coordinate.latitude)!
-        pin.longitude = (view.annotation?.coordinate.longitude)!
-        photoAlbumViewController.pin = pin
+        for pin in pins {
+            if pin.latitude == view.annotation?.coordinate.latitude && pin.longitude == view.annotation?.coordinate.longitude {
+                photoAlbumViewController.pin = pin
+                break
+            }
+        }
         // Dependency injection
         photoAlbumViewController.dataController = dataController
         // Segue to photo album
