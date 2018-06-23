@@ -17,6 +17,20 @@ class PhotoAlbumController: UIViewController {
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var collectionButton: UIBarButtonItem!
+    var pin: Pin!
+    var photos: [Photo] = [Photo]()
+    var dataController: DataController!
+    var fetchedResultsController: NSFetchedResultsController<Photo>!
+    // Indexes for photos for fetchedResultsController
+    var photoIndexesToInsert = [IndexPath]()
+    var photoIndexesToDelete = [IndexPath]()
+    var photoIndexesToUpdate = [IndexPath]()
+    var selectedPhotoIndexes = [IndexPath]()
+    // Determines if collectionButton is enabled
+    var numberOfDownloadedImages: Int = 0
+    // Total number of pages returned by Flickr call for pin
+    var numberOfPagesForPin: Int = 0
+    var currentPageNumber: Int = 1
     
     @IBAction func collectionButtonPressed(_ sender: UIBarButtonItem) {
         // Remove all photos
@@ -50,22 +64,6 @@ class PhotoAlbumController: UIViewController {
             collectionButton.title = Constants.BarButtonTitles.NewCollection
         }
     }
-    
-    
-    var pin: Pin!
-    var photos: [Photo] = [Photo]()
-    var dataController: DataController!
-    var fetchedResultsController: NSFetchedResultsController<Photo>!
-    // Indexes for photos for fetchedResultsController
-    var photoIndexesToInsert = [IndexPath]()
-    var photoIndexesToDelete = [IndexPath]()
-    var photoIndexesToUpdate = [IndexPath]()
-    var selectedPhotoIndexes = [IndexPath]()
-    // Determines if collectionButton is enabled
-    var numberOfDownloadedImages: Int = 0
-    // Total number of pages returned by Flickr call for pin
-    var numberOfPagesForPin: Int = 0
-    var currentPageNumber: Int = 1
     
     fileprivate func configFetchResultsController() {
         let fetchRquest: NSFetchRequest<Photo> = Photo.fetchRequest()
